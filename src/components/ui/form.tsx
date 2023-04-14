@@ -1,17 +1,28 @@
 "use client";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Input } from "../primitives/input";
 import { Label } from "../primitives/label";
 import { Button } from "../primitives/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../primitives/select";
 import { useFormStore } from "@/lib/store/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-type Validation = 'email' | (
-    | "password"
-    | "confirmPassword"
-  )[] | undefined
+const countriesAPIURL = "https://restcountries.com/v3.1/all";
+
+const countries = [
+  { label: "USA", value: "USA" },
+  { label: "Armenia", value: "Armenia" },
+];
+
+type Validation = "email" | ("password" | "confirmPassword")[] | undefined;
 
 const shouldValidate = (step: number): Validation => {
   switch (step) {
@@ -32,6 +43,7 @@ const formSchema = z
       .min(1, "Password is required")
       .min(8, "Password must have more than 8 characters"),
     confirmPassword: z.string().min(1, "Password confirmation is required"),
+    country: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
@@ -60,6 +72,7 @@ export function Form() {
   };
 
   const onNext = () => {
+    console.log(methods.getValues());
     methods
       .trigger(shouldValidate(store.step), { shouldFocus: true })
       .then((isValid) => {
@@ -67,13 +80,14 @@ export function Form() {
           store.increaseStep();
           const values = methods.getValues();
           store.setValues(values);
+          console.log(values);
         }
       })
       .catch((error) => console.error(error));
   };
 
   return (
-    <section className="w-1/2 rounded bg-slate-100 p-4">
+    <section className="w-1/2 rounded bg-slate-100 p-4 shadow-md">
       <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
         Form
       </h1>
@@ -126,6 +140,32 @@ export function Form() {
             </Label>
           </>
         ) : null}
+        {store.step === 2 ? (
+          <div className="relative">
+            <Label htmlFor="country">Select country</Label>
+            <Controller
+              name="country"
+              control={methods.control}
+              render={({ field }) => {
+                return (
+                  <Select value={field.value} onValueChange={field.onChange} name={field.name}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map(({ value, label }) => (
+                        <SelectItem value={value} key={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                );
+              }}
+            />
+          </div>
+        ) : null}
+        {store.step === 3 ? <></> : null}
       </form>
       <div className="flex justify-between">
         <Button

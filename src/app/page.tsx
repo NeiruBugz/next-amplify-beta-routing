@@ -1,6 +1,3 @@
-import Image from "next/image";
-
-import { Code, Paragraph } from "../components/typography";
 import Link from "next/link";
 import { Button } from "@/components/primitives/button";
 

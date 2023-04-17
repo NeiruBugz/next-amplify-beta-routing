@@ -3,10 +3,8 @@ import { create } from "zustand";
 interface FormStore {
   step: number;
   values: {
-    email: string;
-    password: string;
-    confirmPassword: string;
-  } | {};
+    [key: string]: string;
+  };
   increaseStep: () => void;
   decreaseStep: () => void;
   setValues: (values: any) => void;

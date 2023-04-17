@@ -21,7 +21,11 @@ const countries = [
   { label: "Armenia", value: "Armenia" },
 ];
 
-type Validation = "email" | ("password" | "confirmPassword")[] | undefined;
+type Validation =
+  | "email"
+  | ("password" | "confirmPassword")[]
+  | "country"
+  | undefined;
 
 const shouldValidate = (step: number): Validation => {
   switch (step) {
@@ -29,6 +33,8 @@ const shouldValidate = (step: number): Validation => {
       return "email";
     case 1:
       return ["password", "confirmPassword"];
+    case 2:
+      return "country";
     default:
       return undefined;
   }

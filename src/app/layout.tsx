@@ -1,6 +1,7 @@
 import "./globals.css";
 import Script from "next/script";
 import * as snippet from "@segment/snippet";
+import { Header } from "@/components/ui/header";
 
 export const metadata = {
   title: "Create Next App",
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Header />
         <main className="container mx-auto h-[100vh] w-[100vw]">
           {children}
         </main>

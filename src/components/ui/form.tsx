@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "../primitives/input";
 import { Label } from "../primitives/label";
@@ -65,12 +66,15 @@ export function Form() {
     }
   }, [store.values, methods]);
 
-  const onSubmit = (values: any) => {
-    console.log(values);
+  const onSubmit = (values: FormSchema) => {
+    console.log("submit", values);
+
+    global.analytics.track("Form submitted", {
+      message: { email: values.email, country: values.country },
+    });
   };
 
   const onNext = () => {
-    console.log(methods.getValues());
     methods
       .trigger(shouldValidate(store.step), { shouldFocus: true })
       .then((isValid) => {
@@ -78,7 +82,6 @@ export function Form() {
           store.increaseStep();
           const values = methods.getValues();
           store.setValues(values);
-          console.log(values);
         }
       })
       .catch((error) => console.error(error));
@@ -95,6 +98,7 @@ export function Form() {
           <Label htmlFor="email">
             Email
             <Input
+              type="email"
               placeholder="Email"
               className="mt-2"
               {...methods.register("email")}
@@ -146,7 +150,11 @@ export function Form() {
               control={methods.control}
               render={({ field }) => {
                 return (
-                  <Select value={field.value} onValueChange={field.onChange} name={field.name}>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    name={field.name}
+                  >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Select country" />
                     </SelectTrigger>
@@ -163,17 +171,23 @@ export function Form() {
             />
           </div>
         ) : null}
-        {store.step === 3 ? <></> : null}
+        <div className="mt-4 flex w-full justify-between">
+          <Button
+            type="button"
+            disabled={store.step === 0}
+            onClick={() => store.decreaseStep()}
+          >
+            Prev
+          </Button>
+          {store.step === 2 ? (
+            <Button type="submit">Send</Button>
+          ) : (
+            <Button type="button" onClick={onNext}>
+              Next
+            </Button>
+          )}
+        </div>
       </form>
-      <div className="flex justify-between">
-        <Button
-          disabled={store.step === 0}
-          onClick={() => store.decreaseStep()}
-        >
-          Prev
-        </Button>
-        <Button onClick={onNext}>Next</Button>
-      </div>
     </section>
   );
 }

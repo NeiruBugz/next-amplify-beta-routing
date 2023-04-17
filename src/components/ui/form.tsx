@@ -15,8 +15,6 @@ import { useFormStore } from "@/lib/store/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-const countriesAPIURL = "https://restcountries.com/v3.1/all";
-
 const countries = [
   { label: "USA", value: "USA" },
   { label: "Armenia", value: "Armenia" },

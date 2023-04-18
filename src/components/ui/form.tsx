@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../primitives/select";
+import { segmentTrack } from '@/lib/segment';
 import { useFormStore } from "@/lib/store/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -75,7 +76,7 @@ export function Form() {
   const onSubmit = (values: FormSchema) => {
     console.log("submit", values);
 
-    global.analytics.track("Form submitted", {
+    segmentTrack("Form submitted", {
       message: { email: values.email, country: values.country },
     });
   };
